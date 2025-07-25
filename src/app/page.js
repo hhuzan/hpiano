@@ -52,15 +52,19 @@ export default function Home() {
 
 			{bloques.map((bloque) => (
 				<div key={bloque.id} className="border rounded p-4 space-y-2 shadow">
-					<div>
-						<strong>Inicio:</strong> {new Date(bloque.start_time).toLocaleString()}
-						<br />
-						<strong>Fin:</strong> {new Date(bloque.end_time).toLocaleString()}
-						<br />
-						<strong>Notas:</strong> {bloque.note_on_count}
+					<div className="flex justify-between gap-4 text-sm text-gray-500">
+						<div className="w-1/3">
+							<strong>{new Date(bloque.start_time).toLocaleString()}</strong>
+						</div>
+						<div className="w-1/3">
+							<strong>{Math.round((new Date(bloque.end_time) - new Date(bloque.start_time)) / 60000)} min</strong>
+						</div>
+						<div className="w-1/3">
+							<strong>{bloque.note_on_count} Notas</strong>
+						</div>
 					</div>
-					<div>
-						<label className="block font-medium">Obras:</label>
+
+					<div className="flex gap-4">
 						<select
 							multiple
 							value={asignaciones[bloque.id] || []}
@@ -78,10 +82,10 @@ export default function Home() {
 								</option>
 							))}
 						</select>
+						<button onClick={() => guardarAsignacion(bloque.id)} className="bg-blue-600 text-white px-4 py-1 rounded">
+							💾
+						</button>
 					</div>
-					<button onClick={() => guardarAsignacion(bloque.id)} className="bg-blue-600 text-white px-4 py-1 rounded">
-						Guardar
-					</button>
 				</div>
 			))}
 		</main>
