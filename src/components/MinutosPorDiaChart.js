@@ -1,34 +1,52 @@
-// components/MinutosPorDiaChart.js
 "use client";
 
-import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 
 export default function MinutosPorDiaChart({ bloques }) {
-	// Agrupar duración por fecha
-	const datosPorDia = bloques.reduce((acc, b) => {
-		const fecha = new Date(b.start_time).toISOString().slice(0, 10);
-		const duracion = (new Date(b.end_time) - new Date(b.start_time)) / 60000;
-		acc[fecha] = (acc[fecha] || 0) + duracion;
-		return acc;
-	}, {});
+	const duracionPorDia = {};
 
-	const data = Object.entries(datosPorDia).map(([fecha, minutos]) => ({
-		fecha,
-		minutos: Math.round(minutos),
-	}));
+	bloques.forEach((bloque) => {
+		const start = new Date(bloque.start_time);
+		const end = new Date(bloque.end_time);
+		const fecha = start.toISOString().split("T")[0];
+		const minutos = (end - start) / 1000 / 60;
+		duracionPorDia[fecha] = (duracionPorDia[fecha] || 0) + minutos;
+	});
+
+	const fechas = Object.keys(duracionPorDia).sort();
+	if (fechas.length === 0) return null;
+
+	const startDate = new Date(fechas[0]);
+	const endDate = new Date(fechas[fechas.length - 1]);
+
+	const datos = [];
+	for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+		const yyyyMMdd = d.toISOString().split("T")[0];
+
+		// Formato con nombre corto del día (ej: lun 22/07)
+		const label = d.toLocaleDateString("es-AR", {
+			weekday: "short",
+			day: "2-digit",
+			month: "2-digit",
+		});
+
+		datos.push({
+			fecha: label,
+			minutos: Math.round(duracionPorDia[yyyyMMdd] || 0),
+		});
+	}
 
 	return (
-		<section className="h-64 w-full">
-			<h2 className="text-lg font-semibold mb-2">Minutos por día</h2>
-			<ResponsiveContainer width="100%" height="100%">
-				<BarChart data={data}>
+		<div className="w-full h-64">
+			<ResponsiveContainer>
+				<BarChart data={datos}>
 					<CartesianGrid strokeDasharray="3 3" />
 					<XAxis dataKey="fecha" />
 					<YAxis />
 					<Tooltip />
-					<Bar dataKey="minutos" fill="#3b82f6" />
+					<Bar dataKey="minutos" fill="#2563eb" />
 				</BarChart>
 			</ResponsiveContainer>
-		</section>
+		</div>
 	);
 }
