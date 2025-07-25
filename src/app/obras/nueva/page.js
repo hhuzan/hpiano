@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useEffect } from "react";
 
 export default function NuevaObra() {
@@ -67,12 +68,12 @@ export default function NuevaObra() {
 	return (
 		<main className="p-6 max-w-3xl mx-auto">
 			<div className="mb-6 flex gap-4">
-				<a href="/" className="bg-gray-500 text-white px-4 py-2 rounded inline-block">
+				<Link href="/" className="bg-gray-500 text-white px-4 py-2 rounded inline-block">
 					⬅ Volver a bloques
-				</a>
-				<a href="/autores/nuevo" className="bg-blue-700 text-white px-4 py-2 rounded inline-block">
+				</Link>
+				<Link href="/autores/nuevo" className="bg-blue-700 text-white px-4 py-2 rounded inline-block">
 					➕ Agregar nuevo autor
-				</a>
+				</Link>
 			</div>
 
 			<h1 className="text-2xl font-bold mb-4">Nueva Obra</h1>

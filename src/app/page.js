@@ -1,6 +1,7 @@
 // app/page.js
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function Home() {
@@ -45,9 +46,9 @@ export default function Home() {
 			<h1 className="text-2xl font-bold">Bloques MIDI</h1>
 
 			<div className="mb-4">
-				<a href="/obras/nueva" className="bg-green-700 text-white px-4 py-2 rounded inline-block">
+				<Link href="/obras/nueva" className="bg-green-700 text-white px-4 py-2 rounded inline-block">
 					➕ Agregar nueva obra
-				</a>
+				</Link>
 			</div>
 
 			{bloques.map((bloque) => (
