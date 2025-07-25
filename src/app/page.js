@@ -1,27 +1,45 @@
+// app/page.js
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Home() {
 	const [bloques, setBloques] = useState([]);
 	const [obras, setObras] = useState([]);
+	const [asignaciones, setAsignaciones] = useState({});
 	const [nuevaObra, setNuevaObra] = useState("");
-	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-		async function fetchData() {
-			const resBloques = await fetch("/api/bloques");
-			const bloquesData = await resBloques.json();
-			setBloques(bloquesData);
+		fetch("/api/bloques")
+			.then((res) => res.json())
+			.then((data) => {
+				setBloques(data);
+				const initial = {};
+				data.forEach((b) => {
+					initial[b.id] = b.obras.map((o) => o.id);
+				});
+				setAsignaciones(initial);
+			});
 
-			const resObras = await fetch("/api/obras");
-			const obrasData = await resObras.json();
-			setObras(obrasData);
-
-			setLoading(false);
-		}
-		fetchData();
+		fetch("/api/obras")
+			.then((res) => res.json())
+			.then(setObras);
 	}, []);
+
+	const handleSelectChange = (bloqueId, obraIds) => {
+		setAsignaciones((prev) => ({ ...prev, [bloqueId]: obraIds }));
+	};
+
+	const guardarAsignacion = async (bloqueId) => {
+		const res = await fetch("/api/bloques", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ bloqueId, obraIds: asignaciones[bloqueId] }),
+		});
+
+		if (res.ok) alert("✅ Guardado");
+		else alert("❌ Error al guardar");
+	};
 
 	const crearObra = async () => {
 		if (!nuevaObra.trim()) return;
@@ -30,67 +48,59 @@ export default function Home() {
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({ nombre: nuevaObra }),
 		});
-		const obraCreada = await res.json();
-		setObras([...obras, obraCreada]);
-		setNuevaObra("");
+		if (res.ok) {
+			const obra = await res.json();
+			setObras((prev) => [...prev, obra]);
+			setNuevaObra("");
+		} else {
+			alert("Error al crear obra");
+		}
 	};
-
-	const asignarObra = async (bloqueId, obraId) => {
-		await fetch(`/api/bloques/${bloqueId}`, {
-			method: "PUT",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ obra_id: obraId }),
-		});
-
-		setBloques(bloques.map((b) => (b.id === bloqueId ? { ...b, obra_id: obraId } : b)));
-	};
-
-	if (loading) return <div>Cargando...</div>;
 
 	return (
-		<div style={{ maxWidth: 800, margin: "auto", padding: 20 }}>
-			<h1>Bloques MIDI</h1>
+		<main className="p-6 space-y-6">
+			<h1 className="text-2xl font-bold">Bloques MIDI</h1>
 
-			<div>
-				<h2>Crear nueva obra</h2>
-				<input value={nuevaObra} onChange={(e) => setNuevaObra(e.target.value)} placeholder="Nombre de la obra" />
-				<button onClick={crearObra}>Crear</button>
+			<div className="mb-4">
+				<a href="/obras/nueva" className="bg-green-700 text-white px-4 py-2 rounded inline-block">
+					➕ Agregar nueva obra
+				</a>
 			</div>
 
-			<hr />
-
-			<div>
-				{bloques.map((bloque) => (
-					<div
-						key={bloque.id}
-						style={{
-							padding: 10,
-							marginBottom: 10,
-							border: "1px solid #ccc",
-							borderRadius: 4,
-						}}
-					>
-						<div>
-							<strong>
-								{new Date(bloque.start_time).toLocaleString()} - {new Date(bloque.end_time).toLocaleString()}
-							</strong>
-						</div>
-						<div>Note On count: {bloque.note_on_count}</div>
-
-						<div>
-							<label>Obra: </label>
-							<select value={bloque.obra_id || ""} onChange={(e) => asignarObra(bloque.id, e.target.value || null)}>
-								<option value="">Sin asignar</option>
-								{obras.map((obra) => (
-									<option key={obra.id} value={obra.id}>
-										{obra.nombre}
-									</option>
-								))}
-							</select>
-						</div>
+			{bloques.map((bloque) => (
+				<div key={bloque.id} className="border rounded p-4 space-y-2 shadow">
+					<div>
+						<strong>Inicio:</strong> {new Date(bloque.start_time).toLocaleString()}
+						<br />
+						<strong>Fin:</strong> {new Date(bloque.end_time).toLocaleString()}
+						<br />
+						<strong>Notas:</strong> {bloque.note_on_count}
 					</div>
-				))}
-			</div>
-		</div>
+					<div>
+						<label className="block font-medium">Obras:</label>
+						<select
+							multiple
+							value={asignaciones[bloque.id] || []}
+							onChange={(e) =>
+								handleSelectChange(
+									bloque.id,
+									Array.from(e.target.selectedOptions, (opt) => parseInt(opt.value))
+								)
+							}
+							className="w-full border p-2 rounded"
+						>
+							{obras.map((obra) => (
+								<option key={obra.id} value={obra.id}>
+									{obra.nombre}
+								</option>
+							))}
+						</select>
+					</div>
+					<button onClick={() => guardarAsignacion(bloque.id)} className="bg-blue-600 text-white px-4 py-1 rounded">
+						Guardar
+					</button>
+				</div>
+			))}
+		</main>
 	);
 }
