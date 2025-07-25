@@ -23,13 +23,13 @@ export default function Home() {
 			{bloques.map((bloque) => (
 				<div key={bloque.id} className="border p-4 space-y-2">
 					<div className="flex justify-between text-sm ">
-						<div className="w-1/3">
+						<div className="w-1/2">
 							<strong>{new Date(bloque.start_time).toLocaleString()}</strong>
 						</div>
-						<div className="w-1/3">
+						<div className="w-1/4">
 							<strong>{Math.round((new Date(bloque.end_time) - new Date(bloque.start_time)) / 60000)} min</strong>
 						</div>
-						<div className="w-1/3">
+						<div className="w-1/4">
 							<strong>{bloque.note_on_count} Notas</strong>
 						</div>
 					</div>
