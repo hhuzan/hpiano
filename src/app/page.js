@@ -7,7 +7,6 @@ export default function Home() {
 	const [bloques, setBloques] = useState([]);
 	const [obras, setObras] = useState([]);
 	const [asignaciones, setAsignaciones] = useState({});
-	const [nuevaObra, setNuevaObra] = useState("");
 
 	useEffect(() => {
 		fetch("/api/bloques")
@@ -39,22 +38,6 @@ export default function Home() {
 
 		if (res.ok) alert("✅ Guardado");
 		else alert("❌ Error al guardar");
-	};
-
-	const crearObra = async () => {
-		if (!nuevaObra.trim()) return;
-		const res = await fetch("/api/obras", {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ nombre: nuevaObra }),
-		});
-		if (res.ok) {
-			const obra = await res.json();
-			setObras((prev) => [...prev, obra]);
-			setNuevaObra("");
-		} else {
-			alert("Error al crear obra");
-		}
 	};
 
 	return (
