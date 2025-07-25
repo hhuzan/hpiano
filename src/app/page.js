@@ -15,7 +15,7 @@ export default function Home() {
 	}, []);
 
 	return (
-		<main className="p-6">
+		<main className="pt-4 pb-4">
 			{/* <h1 className="text-2xl font-bold">Bloques MIDI</h1> */}
 
 			{bloques.length > 0 && <MinutosPorDiaChart bloques={bloques} />}
