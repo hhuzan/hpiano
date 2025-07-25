@@ -1,103 +1,96 @@
-import Image from "next/image";
+"use client";
+
+import React, { useEffect, useState } from "react";
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+	const [bloques, setBloques] = useState([]);
+	const [obras, setObras] = useState([]);
+	const [nuevaObra, setNuevaObra] = useState("");
+	const [loading, setLoading] = useState(true);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+	useEffect(() => {
+		async function fetchData() {
+			const resBloques = await fetch("/api/bloques");
+			const bloquesData = await resBloques.json();
+			setBloques(bloquesData);
+
+			const resObras = await fetch("/api/obras");
+			const obrasData = await resObras.json();
+			setObras(obrasData);
+
+			setLoading(false);
+		}
+		fetchData();
+	}, []);
+
+	const crearObra = async () => {
+		if (!nuevaObra.trim()) return;
+		const res = await fetch("/api/obras", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ nombre: nuevaObra }),
+		});
+		const obraCreada = await res.json();
+		setObras([...obras, obraCreada]);
+		setNuevaObra("");
+	};
+
+	const asignarObra = async (bloqueId, obraId) => {
+		await fetch(`/api/bloques/${bloqueId}`, {
+			method: "PUT",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ obra_id: obraId }),
+		});
+
+		setBloques(bloques.map((b) => (b.id === bloqueId ? { ...b, obra_id: obraId } : b)));
+	};
+
+	if (loading) return <div>Cargando...</div>;
+
+	return (
+		<div style={{ maxWidth: 800, margin: "auto", padding: 20 }}>
+			<h1>Bloques MIDI</h1>
+
+			<div>
+				<h2>Crear nueva obra</h2>
+				<input value={nuevaObra} onChange={(e) => setNuevaObra(e.target.value)} placeholder="Nombre de la obra" />
+				<button onClick={crearObra}>Crear</button>
+			</div>
+
+			<hr />
+
+			<div>
+				{bloques.map((bloque) => (
+					<div
+						key={bloque.id}
+						style={{
+							padding: 10,
+							marginBottom: 10,
+							border: "1px solid #ccc",
+							borderRadius: 4,
+						}}
+					>
+						<div>
+							<strong>
+								{new Date(bloque.start_time).toLocaleString()} - {new Date(bloque.end_time).toLocaleString()}
+							</strong>
+						</div>
+						<div>Note On count: {bloque.note_on_count}</div>
+
+						<div>
+							<label>Obra: </label>
+							<select value={bloque.obra_id || ""} onChange={(e) => asignarObra(bloque.id, e.target.value || null)}>
+								<option value="">Sin asignar</option>
+								{obras.map((obra) => (
+									<option key={obra.id} value={obra.id}>
+										{obra.nombre}
+									</option>
+								))}
+							</select>
+						</div>
+					</div>
+				))}
+			</div>
+		</div>
+	);
 }
