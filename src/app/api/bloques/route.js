@@ -7,7 +7,10 @@ const sql = neon(`${process.env.DATABASE_URL}`);
 export async function GET() {
 	const result = await sql`
     SELECT 
-      mb.*, 
+      mb.id,
+	  mb.start_time AT TIME ZONE 'America/Argentina/Buenos_Aires' AS start_time,
+	  mb.end_time AT TIME ZONE 'America/Argentina/Buenos_Aires' AS end_time,
+	  mb.note_on_count, 
       COALESCE(json_agg(json_build_object('id', o.id, 'nombre', o.nombre)) FILTER (WHERE o.id IS NOT NULL), '[]') AS obras
     FROM midi_blocks mb
     LEFT JOIN bloques_obras bo ON mb.id = bo.bloque_id
