@@ -26,6 +26,7 @@ export default function Home() {
 						<div className="w-2/3">
 							<strong>
 								{new Date(bloque.start_time).toLocaleString("es-AR", {
+									timeZone: "America/Argentina/Buenos_Aires",
 									weekday: "short",
 									day: "2-digit",
 									month: "2-digit",
