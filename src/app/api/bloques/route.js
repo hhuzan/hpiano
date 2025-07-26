@@ -15,6 +15,10 @@ export async function GET() {
     GROUP BY mb.id
     ORDER BY mb.start_time DESC
   `;
+	result.forEach((row) => {
+		row.start_time = row.start_time.toISOString();
+		row.end_time = row.end_time.toISOString();
+	});
 	return NextResponse.json(result);
 }
 

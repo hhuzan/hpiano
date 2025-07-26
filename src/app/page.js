@@ -14,7 +14,6 @@ export default function Home() {
 			.then(setBloques);
 	}, []);
 
-	console.log(new Date().getTimezoneOffset());
 	return (
 		<main className="pt-4 pb-4">
 			{/* <h1 className="text-2xl font-bold">Bloques MIDI</h1> */}
