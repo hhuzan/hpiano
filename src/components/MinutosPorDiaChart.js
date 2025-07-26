@@ -18,25 +18,19 @@ export default function MinutosPorDiaChart({ bloques }) {
 	const fechas = Object.keys(duracionPorDia).sort();
 	if (fechas.length === 0) return null;
 
-	const startDate = new Date(fechas[0]);
-	const endDate = new Date(fechas[fechas.length - 1]);
-
-	const datos = [];
-	for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
-		const yyyyMMdd = d.toISOString().split("T")[0];
-
-		// Formato con nombre corto del día (ej: lun 22/07)
-		const label = d.toLocaleDateString("es-AR", {
+	const datos = fechas.map((yyyyMMdd) => {
+		const fechaObj = new Date(`${yyyyMMdd}T00:00:00`);
+		const label = fechaObj.toLocaleDateString("es-AR", {
 			weekday: "short",
 			day: "2-digit",
 			month: "2-digit",
+			timeZone: "America/Argentina/Buenos_Aires",
 		});
-
-		datos.push({
+		return {
 			fecha: label,
 			minutos: Math.round(duracionPorDia[yyyyMMdd] || 0),
-		});
-	}
+		};
+	});
 
 	return (
 		<div className="w-full h-64">
