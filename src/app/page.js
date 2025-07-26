@@ -14,6 +14,7 @@ export default function Home() {
 			.then(setBloques);
 	}, []);
 
+	console.log(new Date().getTimezoneOffset());
 	return (
 		<main className="pt-4 pb-4">
 			{/* <h1 className="text-2xl font-bold">Bloques MIDI</h1> */}
@@ -26,7 +27,6 @@ export default function Home() {
 						<div className="w-2/3">
 							<strong>
 								{new Date(bloque.start_time).toLocaleString("es-AR", {
-									timeZone: "America/Argentina/Buenos_Aires",
 									weekday: "short",
 									day: "2-digit",
 									month: "2-digit",
