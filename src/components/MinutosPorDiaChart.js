@@ -8,7 +8,9 @@ export default function MinutosPorDiaChart({ bloques }) {
 	bloques.forEach((bloque) => {
 		const start = new Date(bloque.start_time);
 		const end = new Date(bloque.end_time);
-		const fecha = start.toISOString().split("T")[0];
+		const fecha = start.toLocaleDateString("sv-SE", {
+			timeZone: "America/Argentina/Buenos_Aires",
+		});
 		const minutos = (end - start) / 1000 / 60;
 		duracionPorDia[fecha] = (duracionPorDia[fecha] || 0) + minutos;
 	});
