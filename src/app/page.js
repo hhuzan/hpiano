@@ -4,6 +4,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import MinutosPorDiaChart from "@/components/MinutosPorDiaChart";
+import TiempoPorObraChart from "@/components/TiempoPorObraChart";
 
 export default function Home() {
 	const [bloques, setBloques] = useState([]);
@@ -19,6 +20,8 @@ export default function Home() {
 			{/* <h1 className="text-2xl font-bold">Bloques MIDI</h1> */}
 
 			{bloques.length > 0 && <MinutosPorDiaChart bloques={bloques} />}
+
+			<TiempoPorObraChart />
 
 			{bloques.map((bloque) => (
 				<div key={bloque.id} className="border p-4 space-y-2">
