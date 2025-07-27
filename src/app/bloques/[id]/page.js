@@ -40,7 +40,7 @@ export default function EditarBloque() {
 			body: JSON.stringify({ bloqueId, obraIds: seleccionadas }),
 		});
 
-		if (res.ok) alert("✅ Obras guardadas");
+		if (res.ok) router.push("/");
 		else alert("❌ Error al guardar obras");
 	};
 
