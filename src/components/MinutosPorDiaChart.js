@@ -1,6 +1,6 @@
 "use client";
 
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, ReferenceLine } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, ReferenceLine, LabelList } from "recharts";
 
 export default function MinutosPorDiaChart({ bloques }) {
 	const duracionPorDia = {};
@@ -43,8 +43,10 @@ export default function MinutosPorDiaChart({ bloques }) {
 					<CartesianGrid strokeDasharray="3 3" />
 					<XAxis dataKey="fecha" />
 					<YAxis />
-					<Tooltip />
-					<Bar dataKey="minutos" fill="#2563eb" />{" "}
+					{/* <Tooltip /> */}
+					<Bar dataKey="minutos" fill="#2563eb">
+						<LabelList dataKey="minutos" position="top" />
+					</Bar>
 					<ReferenceLine
 						y={promedio}
 						stroke="red"
