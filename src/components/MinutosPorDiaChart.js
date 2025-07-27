@@ -1,6 +1,6 @@
 "use client";
 
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, ReferenceLine } from "recharts";
 
 export default function MinutosPorDiaChart({ bloques }) {
 	const duracionPorDia = {};
@@ -32,6 +32,10 @@ export default function MinutosPorDiaChart({ bloques }) {
 		};
 	});
 
+	// 🧮 Cálculo del promedio
+	const total = datos.reduce((sum, d) => sum + d.minutos, 0);
+	const promedio = Math.round(total / datos.length);
+
 	return (
 		<div className="w-full h-64">
 			<ResponsiveContainer>
@@ -40,7 +44,17 @@ export default function MinutosPorDiaChart({ bloques }) {
 					<XAxis dataKey="fecha" />
 					<YAxis />
 					<Tooltip />
-					<Bar dataKey="minutos" fill="#2563eb" />
+					<Bar dataKey="minutos" fill="#2563eb" />{" "}
+					<ReferenceLine
+						y={promedio}
+						stroke="red"
+						strokeDasharray="3 3"
+						label={{
+							position: "top",
+							value: `Promedio: ${promedio} min`,
+							fill: "red",
+						}}
+					/>
 				</BarChart>
 			</ResponsiveContainer>
 		</div>
