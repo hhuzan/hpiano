@@ -45,14 +45,14 @@ export default function MinutosPorDiaChart({ bloques }) {
 					<YAxis />
 					{/* <Tooltip /> */}
 					<Bar dataKey="minutos" fill="#2563eb">
-						<LabelList dataKey="minutos" position="top" />
+						<LabelList dataKey="minutos" position="insideTop" fill="yellow" />
 					</Bar>
 					<ReferenceLine
 						y={promedio}
 						stroke="red"
 						strokeDasharray="3 3"
 						label={{
-							position: "top",
+							position: "center",
 							value: `Promedio: ${promedio} min`,
 							fill: "red",
 						}}

@@ -34,7 +34,8 @@ export default function TiempoPorObraChart() {
 					<Bar dataKey="minutos" fill="#4f46e5">
 						<LabelList
 							dataKey="minutos"
-							position="right"
+							position="insideRight"
+							fill="yellow"
 							// formatter={(v) => (typeof v === "number" ? v.toFixed(1) : v)}
 						/>
 					</Bar>
