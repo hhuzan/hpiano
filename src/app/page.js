@@ -15,9 +15,19 @@ export default function Home() {
 			.then(setBloques);
 	}, []);
 
+	const totalHoras =
+		bloques.reduce((acc, bloque) => {
+			const inicio = new Date(bloque.start_time);
+			const fin = new Date(bloque.end_time);
+			const duracionMin = (fin - inicio) / 60000;
+			return acc + duracionMin;
+		}, 0) / 60;
+
 	return (
 		<main className="pt-4 pb-4">
 			{/* <h1 className="text-2xl font-bold">Bloques MIDI</h1> */}
+
+			<h1 className="pl-8 text-2xl font-bold">Total: {totalHoras.toFixed(1)} h</h1>
 
 			{bloques.length > 0 && <MinutosPorDiaChart bloques={bloques} />}
 
