@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import MinutosPorDiaChart from "@/components/MinutosPorDiaChart";
 import TiempoPorObraChart from "@/components/TiempoPorObraChart";
+import MinutosPorDiaStackedChart from "@/components/MinutosPorDiaStackedChart";
 
 export default function Home() {
 	const [bloques, setBloques] = useState([]);
@@ -25,11 +26,11 @@ export default function Home() {
 
 	return (
 		<main className="pt-4 pb-4">
-			{/* <h1 className="text-2xl font-bold">Bloques MIDI</h1> */}
-
 			<h1 className="pl-8 text-2xl font-bold">Total: {totalHoras.toFixed(1)} h</h1>
 
 			{bloques.length > 0 && <MinutosPorDiaChart bloques={bloques} />}
+
+			<MinutosPorDiaStackedChart />
 
 			<TiempoPorObraChart />
 
