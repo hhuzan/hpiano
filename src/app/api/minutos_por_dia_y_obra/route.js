@@ -60,7 +60,7 @@ export async function GET() {
 	}
 
 	// Asegurar todos los días y todas las obras, aunque sea 0
-	const ultimosDias = getUltimosNDias(7);
+	const ultimosDias = getUltimosNDias(14);
 	const resultado = ultimosDias.map((dia) => {
 		const fila = { dia };
 		for (const obra of todasLasObras) {
