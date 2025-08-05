@@ -41,7 +41,7 @@ export default function MinutosPorDiaStackedChart() {
 							key={obra}
 							dataKey={obra}
 							stackId="a"
-							fill={`hsl(${(index * 60) % 360}, 70%, 50%)`} // colores distintos
+							fill={`hsl(${(index * 45) % 360}, 70%, 50%)`} // colores distintos
 						/>
 					))}
 				</BarChart>
