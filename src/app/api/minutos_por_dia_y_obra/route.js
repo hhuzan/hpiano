@@ -24,8 +24,9 @@ export async function GET() {
     FROM midi_blocks mb
     LEFT JOIN bloques_obras bo ON mb.id = bo.bloque_id
     LEFT JOIN obras o ON bo.obra_id = o.id
+	WHERE (mb.start_time AT TIME ZONE 'America/Argentina/Buenos_Aires') >= (CURRENT_DATE - INTERVAL '15 days')
     GROUP BY mb.id
-	ORDER BY start_time
+	ORDER BY mb.start_time AT TIME ZONE 'America/Argentina/Buenos_Aires';
   `;
 
 	// Obtener lista única de obras
@@ -59,7 +60,7 @@ export async function GET() {
 			porDia[dia][obra] += minutosPorObra;
 		}
 	}
-
+	console.log(porDia);
 	// Asegurar todos los días y todas las obras, aunque sea 0
 	const ultimosDias = getUltimosNDias(14);
 	const resultado = ultimosDias.map((dia) => {
@@ -69,6 +70,6 @@ export async function GET() {
 		}
 		return fila;
 	});
-
+	console.log(resultado);
 	return NextResponse.json(resultado);
 }
