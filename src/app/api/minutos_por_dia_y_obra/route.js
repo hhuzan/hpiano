@@ -60,7 +60,6 @@ export async function GET() {
 			porDia[dia][obra] += minutosPorObra;
 		}
 	}
-	console.log(porDia);
 	// Asegurar todos los días y todas las obras, aunque sea 0
 	const ultimosDias = getUltimosNDias(14);
 	const resultado = ultimosDias.map((dia) => {
@@ -70,6 +69,5 @@ export async function GET() {
 		}
 		return fila;
 	});
-	console.log(resultado);
 	return NextResponse.json(resultado);
 }
