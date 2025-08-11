@@ -30,6 +30,7 @@ export async function GET() {
 	// Obtener lista única de obras
 	const todasLasObras = new Set();
 	bloques.forEach((b) => b.obras.forEach((o) => todasLasObras.add(o)));
+	const arrayTodasLasObras = Array.from(todasLasObras).sort();
 
 	// Agrupar minutos por día y obra
 	const porDia = {};
@@ -63,7 +64,7 @@ export async function GET() {
 	const ultimosDias = getUltimosNDias(14);
 	const resultado = ultimosDias.map((dia) => {
 		const fila = { dia };
-		for (const obra of todasLasObras) {
+		for (const obra of arrayTodasLasObras) {
 			fila[obra] = porDia[dia]?.[obra] ? Number(porDia[dia][obra].toFixed(1)) : 0;
 		}
 		return fila;
