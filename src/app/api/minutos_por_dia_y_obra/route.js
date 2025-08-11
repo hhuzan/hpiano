@@ -25,12 +25,12 @@ export async function GET() {
     LEFT JOIN bloques_obras bo ON mb.id = bo.bloque_id
     LEFT JOIN obras o ON bo.obra_id = o.id
     GROUP BY mb.id
+	ORDER BY start_time
   `;
 
 	// Obtener lista única de obras
 	const todasLasObras = new Set();
 	bloques.forEach((b) => b.obras.forEach((o) => todasLasObras.add(o)));
-	const arrayTodasLasObras = Array.from(todasLasObras).sort();
 
 	// Agrupar minutos por día y obra
 	const porDia = {};
@@ -64,7 +64,7 @@ export async function GET() {
 	const ultimosDias = getUltimosNDias(14);
 	const resultado = ultimosDias.map((dia) => {
 		const fila = { dia };
-		for (const obra of arrayTodasLasObras) {
+		for (const obra of todasLasObras) {
 			fila[obra] = porDia[dia]?.[obra] ? Number(porDia[dia][obra].toFixed(1)) : 0;
 		}
 		return fila;
