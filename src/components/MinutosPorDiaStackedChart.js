@@ -5,25 +5,25 @@ import { useEffect, useState } from "react";
 
 export default function MinutosPorDiaStackedChart() {
 	const [obras, setObras] = useState([]);
+	const [data, setData] = useState([]);
 
 	useEffect(() => {
 		const fetchData = async () => {
 			const res = await fetch("/api/minutos_por_dia_y_obra");
 			const raw = await res.json();
+			setData(raw);
 
-			const primeraFila = raw[0];
-			if (primeraFila) {
-				const claves = Object.keys(primeraFila).filter((k) => k !== "dia");
-				setObras(claves);
-			}
+			const claves = Object.keys(raw[0]).filter((k) => k !== "dia");
+			setObras(claves);
 		};
 		fetchData();
 	}, []);
 
+	console.log(data);
 	return (
 		<div className="h-96">
 			<ResponsiveContainer width="100%" height="100%">
-				<BarChart data={dataConTotales}>
+				<BarChart data={data}>
 					<XAxis dataKey="dia" />
 					<YAxis />
 					<Legend />
