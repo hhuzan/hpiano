@@ -6,21 +6,26 @@ import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, CartesianGrid, Refere
 export default function MinutosPorDiaChart() {
 	const [minutosPorDia, setMinutosPorDia] = useState([]);
 
+	// useEffect(() => {
+	// 	fetch("/api/minutos_por_dia")
+	// 		.then((res) => res.json())
+	// 		.then((data) =>
+	// 			setMinutosPorDia(
+	// 				data.map((item) => ({
+	// 					...item,
+	// 					dia: new Date(item.dia).toLocaleDateString("es-AR", {
+	// 						weekday: "short",
+	// 						day: "2-digit",
+	// 						month: "2-digit",
+	// 					}),
+	// 				}))
+	// 			)
+	// 		);
+	// }, []);
 	useEffect(() => {
 		fetch("/api/minutos_por_dia")
 			.then((res) => res.json())
-			.then((data) =>
-				setMinutosPorDia(
-					data.map((item) => ({
-						...item,
-						dia: new Date(item.dia).toLocaleDateString("es-AR", {
-							weekday: "short",
-							day: "2-digit",
-							month: "2-digit",
-						}),
-					}))
-				)
-			);
+			.then((data) => setMinutosPorDia(data));
 	}, []);
 
 	// 🧮 Cálculo del promedio

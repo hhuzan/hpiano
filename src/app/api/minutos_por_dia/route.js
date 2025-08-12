@@ -7,10 +7,10 @@ const sql = neon(`${process.env.DATABASE_URL}`);
 export async function GET() {
 	const result = await sql`
 		SELECT
-			DATE(start_time) AS dia,
+			TO_CHAR(start_time, 'YYYY-MM-DD') AS dia,
 			ROUND(SUM(EXTRACT(EPOCH FROM (end_time - start_time)) / 60)) AS minutos
 		FROM midi_blocks
-		GROUP BY DATE(start_time)
+		GROUP BY TO_CHAR(start_time, 'YYYY-MM-DD')
 		ORDER BY dia;
   `;
 	return NextResponse.json(result);
