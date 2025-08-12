@@ -18,7 +18,7 @@ const TotalHoras = () => {
 
 	return (
 		<h1 className="pl-8 text-2xl font-bold">
-			Total Horas: {horas}:{minutos}
+			Total: {horas}:{minutos} horas
 		</h1>
 	);
 };
