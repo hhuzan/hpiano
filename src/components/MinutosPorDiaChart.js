@@ -14,8 +14,9 @@ export default function MinutosPorDiaChart() {
 					data.map((item) => ({
 						...item,
 						dia: new Date(item.dia).toLocaleDateString("es-AR", {
-							month: "2-digit",
+							weekday: "short",
 							day: "2-digit",
+							month: "2-digit",
 						}),
 					}))
 				)
