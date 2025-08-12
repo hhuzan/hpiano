@@ -23,7 +23,6 @@ export default function MinutosPorDiaChart() {
 			);
 	}, []);
 
-	console.log(minutosPorDia);
 	// 🧮 Cálculo del promedio
 	const total = minutosPorDia.reduce((sum, d) => sum + Number(d.minutos), 0);
 	const promedio = Math.round(total / minutosPorDia.length);

@@ -19,7 +19,6 @@ export default function MinutosPorDiaStackedChart() {
 		fetchData();
 	}, []);
 
-	console.log(data);
 	return (
 		<div className="h-96">
 			<ResponsiveContainer width="100%" height="100%">
