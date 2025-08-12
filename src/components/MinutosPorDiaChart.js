@@ -5,44 +5,28 @@ import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, CartesianGrid, Refere
 
 export default function MinutosPorDiaChart() {
 	const [minutosPorDia, setMinutosPorDia] = useState([]);
-	// const duracionPorDia = {};
 
 	useEffect(() => {
-		fetch("/api/bloques")
+		fetch("/api/minutos_por_dia")
 			.then((res) => res.json())
-			.then(setMinutosPorDia);
+			.then((data) =>
+				setMinutosPorDia(
+					data.map((item) => ({
+						...item,
+						dia: new Date(item.dia).toLocaleDateString("es-AR", {
+							month: "2-digit",
+							day: "2-digit",
+						}),
+					}))
+				)
+			);
 	}, []);
 
-	// bloques.forEach((bloque) => {
-	// 	const start = new Date(bloque.start_time);
-	// 	const end = new Date(bloque.end_time);
-	// 	const fecha = start.toLocaleDateString("sv-SE", {
-	// 		timeZone: "America/Argentina/Buenos_Aires",
-	// 	});
-	// 	const minutos = (end - start) / 1000 / 60;
-	// 	duracionPorDia[fecha] = (duracionPorDia[fecha] || 0) + minutos;
-	// });
-
-	// const fechas = Object.keys(duracionPorDia).sort();
-	// if (fechas.length === 0) return null;
-
-	// const datos = fechas.map((yyyyMMdd) => {
-	// 	const fechaObj = new Date(`${yyyyMMdd}T00:00:00`);
-	// 	const label = fechaObj.toLocaleDateString("es-AR", {
-	// 		weekday: "short",
-	// 		day: "2-digit",
-	// 		month: "2-digit",
-	// 		timeZone: "America/Argentina/Buenos_Aires",
-	// 	});
-	// 	return {
-	// 		fecha: label,
-	// 		minutos: Math.round(duracionPorDia[yyyyMMdd] || 0),
-	// 	};
-	// });
+	console.log(minutosPorDia);
 
 	// 🧮 Cálculo del promedio
-	// const total = datos.reduce((sum, d) => sum + d.minutos, 0);
-	// const promedio = Math.round(total / datos.length);
+	const total = minutosPorDia.reduce((sum, d) => sum + d.minutos, 0);
+	const promedio = Math.round(total / minutosPorDia.length);
 
 	return (
 		<div className="w-full h-64">
@@ -54,7 +38,7 @@ export default function MinutosPorDiaChart() {
 					<Bar dataKey="minutos" fill="#2563eb">
 						<LabelList dataKey="minutos" position="insideTop" fill="yellow" />
 					</Bar>
-					{/* <ReferenceLine
+					<ReferenceLine
 						y={promedio}
 						stroke="red"
 						strokeDasharray="3 3"
@@ -63,7 +47,7 @@ export default function MinutosPorDiaChart() {
 							value: `Promedio: ${promedio} min`,
 							fill: "red",
 						}}
-					/> */}
+					/>
 				</BarChart>
 			</ResponsiveContainer>
 		</div>

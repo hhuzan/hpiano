@@ -8,7 +8,7 @@ export async function GET() {
 	const result = await sql`
 		SELECT
 			DATE(start_time) AS dia,
-			SUM(EXTRACT(EPOCH FROM (end_time - start_time)) / 60) AS minutos
+			ROUND(SUM(EXTRACT(EPOCH FROM (end_time - start_time)) / 60)) AS minutos
 		FROM midi_blocks
 		GROUP BY DATE(start_time)
 		ORDER BY dia;
