@@ -7,13 +7,13 @@ const TotalHoras = () => {
 	const [minutos, setMinutos] = useState([]);
 
 	useEffect(() => {
-		const fetch_total = async () => {
+		const fetchData = async () => {
 			const res = await fetch("/api/total_horas");
 			const total = await res.json();
 			setHoras(total[0]["sum"]["hours"]);
 			setMinutos(String(total[0]["sum"]["minutes"]).padStart(2, "0"));
 		};
-		fetch_total();
+		fetchData();
 	}, []);
 
 	return (

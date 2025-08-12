@@ -1,17 +1,15 @@
 "use client";
 
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, LabelList, Legend } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, LabelList, Legend } from "recharts";
 import { useEffect, useState } from "react";
 
 export default function MinutosPorDiaStackedChart() {
-	const [data, setData] = useState([]);
 	const [obras, setObras] = useState([]);
 
 	useEffect(() => {
 		const fetchData = async () => {
 			const res = await fetch("/api/minutos_por_dia_y_obra");
 			const raw = await res.json();
-			setData(raw);
 
 			const primeraFila = raw[0];
 			if (primeraFila) {
@@ -21,12 +19,6 @@ export default function MinutosPorDiaStackedChart() {
 		};
 		fetchData();
 	}, []);
-
-	// Calcular totales diarios para el label encima de la pila
-	const dataConTotales = data.map((row) => {
-		const total = obras.reduce((acc, obra) => acc + (row[obra] || 0), 0);
-		return { ...row, total };
-	});
 
 	return (
 		<div className="h-96">
@@ -59,15 +51,6 @@ export default function MinutosPorDiaStackedChart() {
 							);
 						})}
 					</defs>
-
-					{/* <Bar dataKey="total" fill="transparent">
-						<LabelList
-							dataKey="total"
-							position="top"
-							formatter={(value) => (value > 0 ? value.toFixed(1) : "")}
-							style={{ fill: "yellow", fontWeight: "bold", fontSize: 13 }}
-						/>
-					</Bar> */}
 
 					{obras.map((obra, index) => {
 						const patternId = Math.floor(index / 6) % 2 === 0 ? "solid" : "diagonal-stripes";
