@@ -1,53 +1,60 @@
 "use client";
 
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, ReferenceLine, LabelList } from "recharts";
+import { useEffect, useState } from "react";
+import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, CartesianGrid, ReferenceLine, LabelList } from "recharts";
 
-export default function MinutosPorDiaChart({ bloques }) {
-	const duracionPorDia = {};
+export default function MinutosPorDiaChart() {
+	const [minutosPorDia, setMinutosPorDia] = useState([]);
+	// const duracionPorDia = {};
 
-	bloques.forEach((bloque) => {
-		const start = new Date(bloque.start_time);
-		const end = new Date(bloque.end_time);
-		const fecha = start.toLocaleDateString("sv-SE", {
-			timeZone: "America/Argentina/Buenos_Aires",
-		});
-		const minutos = (end - start) / 1000 / 60;
-		duracionPorDia[fecha] = (duracionPorDia[fecha] || 0) + minutos;
-	});
+	useEffect(() => {
+		fetch("/api/bloques")
+			.then((res) => res.json())
+			.then(setMinutosPorDia);
+	}, []);
 
-	const fechas = Object.keys(duracionPorDia).sort();
-	if (fechas.length === 0) return null;
+	// bloques.forEach((bloque) => {
+	// 	const start = new Date(bloque.start_time);
+	// 	const end = new Date(bloque.end_time);
+	// 	const fecha = start.toLocaleDateString("sv-SE", {
+	// 		timeZone: "America/Argentina/Buenos_Aires",
+	// 	});
+	// 	const minutos = (end - start) / 1000 / 60;
+	// 	duracionPorDia[fecha] = (duracionPorDia[fecha] || 0) + minutos;
+	// });
 
-	const datos = fechas.map((yyyyMMdd) => {
-		const fechaObj = new Date(`${yyyyMMdd}T00:00:00`);
-		const label = fechaObj.toLocaleDateString("es-AR", {
-			weekday: "short",
-			day: "2-digit",
-			month: "2-digit",
-			timeZone: "America/Argentina/Buenos_Aires",
-		});
-		return {
-			fecha: label,
-			minutos: Math.round(duracionPorDia[yyyyMMdd] || 0),
-		};
-	});
+	// const fechas = Object.keys(duracionPorDia).sort();
+	// if (fechas.length === 0) return null;
+
+	// const datos = fechas.map((yyyyMMdd) => {
+	// 	const fechaObj = new Date(`${yyyyMMdd}T00:00:00`);
+	// 	const label = fechaObj.toLocaleDateString("es-AR", {
+	// 		weekday: "short",
+	// 		day: "2-digit",
+	// 		month: "2-digit",
+	// 		timeZone: "America/Argentina/Buenos_Aires",
+	// 	});
+	// 	return {
+	// 		fecha: label,
+	// 		minutos: Math.round(duracionPorDia[yyyyMMdd] || 0),
+	// 	};
+	// });
 
 	// 🧮 Cálculo del promedio
-	const total = datos.reduce((sum, d) => sum + d.minutos, 0);
-	const promedio = Math.round(total / datos.length);
+	// const total = datos.reduce((sum, d) => sum + d.minutos, 0);
+	// const promedio = Math.round(total / datos.length);
 
 	return (
 		<div className="w-full h-64">
 			<ResponsiveContainer>
-				<BarChart data={datos}>
+				<BarChart data={minutosPorDia}>
 					<CartesianGrid strokeDasharray="3 3" />
-					<XAxis dataKey="fecha" />
+					<XAxis dataKey="dia" />
 					<YAxis />
-					{/* <Tooltip /> */}
 					<Bar dataKey="minutos" fill="#2563eb">
 						<LabelList dataKey="minutos" position="insideTop" fill="yellow" />
 					</Bar>
-					<ReferenceLine
+					{/* <ReferenceLine
 						y={promedio}
 						stroke="red"
 						strokeDasharray="3 3"
@@ -56,7 +63,7 @@ export default function MinutosPorDiaChart({ bloques }) {
 							value: `Promedio: ${promedio} min`,
 							fill: "red",
 						}}
-					/>
+					/> */}
 				</BarChart>
 			</ResponsiveContainer>
 		</div>
