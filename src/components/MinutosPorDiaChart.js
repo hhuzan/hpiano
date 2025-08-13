@@ -32,12 +32,17 @@ export default function MinutosPorDiaChart() {
 	const total = minutosPorDia.reduce((sum, d) => sum + Number(d.minutos), 0);
 	const promedio = Math.round(total / minutosPorDia.length);
 
+	const formatXAxis = (tickItem) => {
+		const date = new Date(tickItem);
+		return date.toLocaleDateString("es-AR", { month: "short", day: "numeric" });
+	};
+
 	return (
 		<div className="w-full h-64">
 			<ResponsiveContainer>
 				<BarChart data={minutosPorDia}>
 					<CartesianGrid strokeDasharray="3 3" />
-					<XAxis dataKey="dia" />
+					<XAxis dataKey="dia" tickFormatter={formatXAxis} />
 					<YAxis />
 					<Bar dataKey="minutos" fill="#2563eb">
 						<LabelList dataKey="minutos" position="insideTop" fill="yellow" />
