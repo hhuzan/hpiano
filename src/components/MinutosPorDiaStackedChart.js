@@ -56,7 +56,6 @@ const MinutosPorDiaStackedChart = () => {
 
 					{obras.map((obra, index) => {
 						const patternId = Math.floor(index / 6) % 2 === 0 ? "solid" : "diagonal-stripes";
-						console.log(obra, index);
 						return (
 							<Bar key={obra} dataKey={obra} stackId="a" fill={`url(#${patternId}-${index})`}>
 								<LabelList

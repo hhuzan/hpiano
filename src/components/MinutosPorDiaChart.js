@@ -1,31 +1,25 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, CartesianGrid, ReferenceLine, LabelList } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, CartesianGrid, ReferenceLine, LabelList, Line } from "recharts";
 
 export default function MinutosPorDiaChart() {
 	const [minutosPorDia, setMinutosPorDia] = useState([]);
 
-	// useEffect(() => {
-	// 	fetch("/api/minutos_por_dia")
-	// 		.then((res) => res.json())
-	// 		.then((data) =>
-	// 			setMinutosPorDia(
-	// 				data.map((item) => ({
-	// 					...item,
-	// 					dia: new Date(item.dia).toLocaleDateString("es-AR", {
-	// 						weekday: "short",
-	// 						day: "2-digit",
-	// 						month: "2-digit",
-	// 					}),
-	// 				}))
-	// 			)
-	// 		);
-	// }, []);
 	useEffect(() => {
-		fetch("/api/minutos_por_dia")
-			.then((res) => res.json())
-			.then((data) => setMinutosPorDia(data));
+		const fetchData = async () => {
+			const res = await fetch("/api/minutos_por_dia");
+			const raw = await res.json();
+			const windowSize = 7;
+			const dataWithMA = raw.map((d, i) => {
+				const start = Math.max(0, i - windowSize + 1);
+				const windowData = raw.slice(start, i + 1);
+				const avg = windowData.reduce((sum, item) => sum + Number(item.minutos), 0) / windowData.length;
+				return { ...d, movingAvg: avg };
+			});
+			setMinutosPorDia(dataWithMA);
+		};
+		fetchData();
 	}, []);
 
 	// 🧮 Cálculo del promedio
@@ -57,6 +51,7 @@ export default function MinutosPorDiaChart() {
 							fill: "red",
 						}}
 					/>
+					<Line type="monotone" dataKey="movingAvg" stroke="#ff7300" dot={false} strokeWidth={2} />
 				</BarChart>
 			</ResponsiveContainer>
 		</div>
