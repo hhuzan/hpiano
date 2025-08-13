@@ -17,57 +17,34 @@ function getUltimosNDias(n) {
 
 export async function GET() {
 	const bloques = await sql`
-    SELECT 
-      mb.start_time AT TIME ZONE 'America/Argentina/Buenos_Aires' AS start_time,
-      mb.end_time AT TIME ZONE 'America/Argentina/Buenos_Aires' AS end_time,
-      COALESCE(json_agg(o.nombre) FILTER (WHERE o.id IS NOT NULL), '[]') AS obras
-    FROM midi_blocks mb
-    LEFT JOIN bloques_obras bo ON mb.id = bo.bloque_id
-    LEFT JOIN obras o ON bo.obra_id = o.id
-	WHERE (mb.start_time AT TIME ZONE 'America/Argentina/Buenos_Aires') >= (CURRENT_DATE - INTERVAL '15 days')
-    GROUP BY mb.id
-	ORDER BY mb.start_time AT TIME ZONE 'America/Argentina/Buenos_Aires';
+		SELECT
+		dia,
+		t.nombre,
+		ROUND(SUM(duracion_min / total_obras)) AS minutos
+		FROM (
+		SELECT
+			date_trunc('day', start_time AT TIME ZONE 'America/Argentina/Buenos_Aires') AS dia,
+			o.nombre,
+			EXTRACT(EPOCH FROM (end_time - start_time)) / 60 AS duracion_min,
+			COUNT(*) OVER (PARTITION BY mb.id) AS total_obras
+		FROM midi_blocks mb
+		LEFT JOIN bloques_obras bo ON mb.id = bo.bloque_id
+		LEFT JOIN obras o ON bo.obra_id = o.id
+		WHERE start_time AT TIME ZONE 'America/Argentina/Buenos_Aires' >= (CURRENT_DATE - INTERVAL '13 days')
+		) t
+		GROUP BY dia, t.nombre
+		ORDER BY dia, t.nombre;
   `;
 
-	// Obtener lista única de obras
-	const todasLasObras = new Set();
-	bloques.forEach((b) => b.obras.forEach((o) => todasLasObras.add(o)));
+	const grouped = Object.values(
+		bloques.reduce((acc, { dia, nombre, minutos }) => {
+			if (!acc[dia]) {
+				acc[dia] = { dia };
+			}
+			acc[dia][nombre] = Number(minutos);
+			return acc;
+		}, {})
+	);
 
-	// Agrupar minutos por día y obra
-	const porDia = {};
-
-	for (const bloque of bloques) {
-		const start = new Date(bloque.start_time);
-		const end = new Date(bloque.end_time);
-		const duracionMin = (end - start) / 60000;
-
-		const obras = bloque.obras;
-		const diaLocal = start.toLocaleDateString("es-AR", {
-			timeZone: "America/Argentina/Buenos_Aires",
-			year: "numeric",
-			month: "2-digit",
-			day: "2-digit",
-		});
-		const [day, month, year] = diaLocal.split("/");
-		const dia = `${year}-${month}-${day}`;
-
-		if (!porDia[dia]) porDia[dia] = {};
-
-		const minutosPorObra = duracionMin / obras.length;
-
-		for (const obra of obras) {
-			if (!porDia[dia][obra]) porDia[dia][obra] = 0;
-			porDia[dia][obra] += minutosPorObra;
-		}
-	}
-	// Asegurar todos los días y todas las obras, aunque sea 0
-	const ultimosDias = getUltimosNDias(14);
-	const resultado = ultimosDias.map((dia) => {
-		const fila = { dia };
-		for (const obra of todasLasObras) {
-			fila[obra] = porDia[dia]?.[obra] ? Number(porDia[dia][obra].toFixed(1)) : 0;
-		}
-		return fila;
-	});
-	return NextResponse.json(resultado);
+	return NextResponse.json(grouped);
 }

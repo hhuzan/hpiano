@@ -3,7 +3,7 @@
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, LabelList, Legend } from "recharts";
 import { useEffect, useState } from "react";
 
-export default function MinutosPorDiaStackedChart() {
+const MinutosPorDiaStackedChart = () => {
 	const [obras, setObras] = useState([]);
 	const [data, setData] = useState([]);
 
@@ -12,21 +12,24 @@ export default function MinutosPorDiaStackedChart() {
 			const res = await fetch("/api/minutos_por_dia_y_obra");
 			const raw = await res.json();
 			setData(raw);
-
-			const claves = Object.keys(raw[0]).filter((k) => k !== "dia");
-			setObras(claves);
+			const claves = [...new Set(raw.flatMap((obj) => Object.keys(obj).filter((k) => k !== "dia")))];
+			setObras(claves.sort());
 		};
 		fetchData();
 	}, []);
+
+	const formatXAxis = (tickItem) => {
+		const date = new Date(tickItem);
+		return date.toLocaleDateString("es-AR", { weekday: "short", day: "numeric" });
+	};
 
 	return (
 		<div className="h-96">
 			<ResponsiveContainer width="100%" height="100%">
 				<BarChart data={data}>
-					<XAxis dataKey="dia" />
+					<XAxis dataKey="dia" tickFormatter={formatXAxis} />
 					<YAxis />
 					<Legend />
-
 					<defs>
 						{obras.map((obra, index) => {
 							const color = `hsl(${(index * 60) % 360}, 70%, 50%)`;
@@ -53,6 +56,7 @@ export default function MinutosPorDiaStackedChart() {
 
 					{obras.map((obra, index) => {
 						const patternId = Math.floor(index / 6) % 2 === 0 ? "solid" : "diagonal-stripes";
+						console.log(obra, index);
 						return (
 							<Bar key={obra} dataKey={obra} stackId="a" fill={`url(#${patternId}-${index})`}>
 								<LabelList
@@ -68,4 +72,6 @@ export default function MinutosPorDiaStackedChart() {
 			</ResponsiveContainer>
 		</div>
 	);
-}
+};
+
+export default MinutosPorDiaStackedChart;
