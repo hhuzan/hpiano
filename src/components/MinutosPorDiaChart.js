@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, CartesianGrid, ReferenceLine, LabelList, Line } from "recharts";
 
-export default function MinutosPorDiaChart() {
+const MinutosPorDiaChart = () => {
 	const [minutosPorDia, setMinutosPorDia] = useState([]);
 
 	useEffect(() => {
@@ -56,4 +56,6 @@ export default function MinutosPorDiaChart() {
 			</ResponsiveContainer>
 		</div>
 	);
-}
+};
+
+export default MinutosPorDiaChart;
