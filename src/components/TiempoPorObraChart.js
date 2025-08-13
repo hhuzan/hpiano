@@ -22,6 +22,10 @@ export default function TiempoPorObraChart() {
 			});
 	}, []);
 
+	const formater = () => {
+		return "";
+	};
+
 	return (
 		<div className="mt-10">
 			{/* <h2 className="text-xl font-bold mb-4">Tiempo proporcional por obra (minutos)</h2> */}
@@ -29,9 +33,16 @@ export default function TiempoPorObraChart() {
 				<BarChart data={data} layout="vertical" margin={{ top: 10, right: 30, left: 100, bottom: 10 }}>
 					<CartesianGrid strokeDasharray="3 3" />
 					<XAxis type="number" label={{ value: "Minutos", position: "insideBottom", offset: -5 }} />
-					<YAxis type="category" dataKey="obra" width={150} />
+					{/* <YAxis type="category" dataKey="obra" width={150} /> */}
+					<YAxis type="category" tickFormatter={formater} width={0} />
 					{/* <Tooltip formatter={(value) => (typeof value === "number" ? `${value.toFixed(1)} min` : value)} /> */}
 					<Bar dataKey="minutos" fill="#4f46e5">
+						<LabelList
+							dataKey="obra"
+							position="insideLeft"
+							fill="yellow"
+							// formatter={(v) => (typeof v === "number" ? v.toFixed(1) : v)}
+						/>
 						<LabelList
 							dataKey="minutos"
 							position="insideRight"
