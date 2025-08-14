@@ -1,7 +1,7 @@
 export default function manifest() {
 	return {
-		name: "hPiano",
-		short_name: "hPiano",
+		name: "HPiano",
+		short_name: "HPiano",
 		description: "Piano Practice Time Tracker",
 		start_url: "/",
 		display: "standalone",
