@@ -23,7 +23,8 @@ export async function GET() {
 		ROUND(SUM(duracion_min / total_obras)) AS minutos
 		FROM (
 		SELECT
-			date_trunc('day', start_time AT TIME ZONE 'America/Argentina/Buenos_Aires') AS dia,
+			date_trunc('day', start_time AT TIME ZONE 'America/Argentina/Buenos_Aires')
+				AT TIME ZONE 'America/Argentina/Buenos_Aires' AS dia,
 			o.nombre,
 			EXTRACT(EPOCH FROM (end_time - start_time)) / 60 AS duracion_min,
 			COUNT(*) OVER (PARTITION BY mb.id) AS total_obras
