@@ -2,7 +2,7 @@ import "./globals.css";
 
 export const metadata = {
 	title: "HPiano",
-	description: "Hugo's Piano",
+	description: "HPiano",
 	icons: {
 		icon: "/favicon.ico",
 	},
