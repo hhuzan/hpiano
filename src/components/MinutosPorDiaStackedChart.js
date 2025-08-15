@@ -11,7 +11,7 @@ const MinutosPorDiaStackedChart = () => {
 		const fetchData = async () => {
 			const res = await fetch("/api/minutos_por_dia_y_obra");
 			const raw = await res.json();
-			console.log(raw);
+			setData(raw);
 			const claves = [
 				...new Set(
 					raw.flatMap((obj) =>
