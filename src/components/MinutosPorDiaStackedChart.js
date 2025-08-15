@@ -6,21 +6,22 @@ import { useEffect, useState } from "react";
 const MinutosPorDiaStackedChart = () => {
 	const [obras, setObras] = useState([]);
 	const [data, setData] = useState([]);
+	console.log(data);
 
 	useEffect(() => {
 		const fetchData = async () => {
 			const res = await fetch("/api/minutos_por_dia_y_obra");
 			const raw = await res.json();
+
+			raw.forEach((obj) => {
+				if ("null" in obj) {
+					obj["❓❓❓"] = obj.null;
+					delete obj.null;
+				}
+			});
+
 			setData(raw);
-			const claves = [
-				...new Set(
-					raw.flatMap((obj) =>
-						Object.keys(obj)
-							.filter((k) => k !== "dia")
-							.map((k) => (k === null ? "❓❓❓" : k))
-					)
-				),
-			];
+			const claves = [...new Set(raw.flatMap((obj) => Object.keys(obj).filter((k) => k !== "dia")))];
 			setObras(claves.sort());
 		};
 		fetchData();
