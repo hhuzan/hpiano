@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 const MinutosPorDiaStackedChart = () => {
 	const [obras, setObras] = useState([]);
 	const [data, setData] = useState([]);
-	console.log(data);
 
 	useEffect(() => {
 		const fetchData = async () => {
