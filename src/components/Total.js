@@ -21,7 +21,7 @@ const Total = () => {
 	}, []);
 
 	return (
-		<h1 className="flex flex-row justify-between pl-8 text-2xl font-bold">
+		<h1 className="flex flex-row justify-between pl-8 pb-4 text-2xl font-bold">
 			<div>Total:</div>
 			<div>{dias} días</div>
 			<div>
