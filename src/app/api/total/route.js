@@ -6,7 +6,9 @@ const sql = neon(`${process.env.DATABASE_URL}`);
 
 export async function GET() {
 	const result = await sql`
-   		select sum(end_time - start_time)
-    	from midi_blocks`;
+   		SELECT COUNT (DISTINCT date_trunc('day', start_time AT TIME ZONE 'America/Argentina/Buenos_Aires')) AS dias,
+   			SUM(end_time - start_time) AS tiempo,
+   			SUM(note_on_count) AS notas
+    	FROM midi_blocks`;
 	return NextResponse.json(result);
 }
