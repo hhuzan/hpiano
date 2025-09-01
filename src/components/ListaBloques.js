@@ -14,7 +14,6 @@ const ListaBloques = () => {
 
 	return (
 		<div>
-			{" "}
 			{bloques.map((bloque) => (
 				<div key={bloque.id} className="border p-4 space-y-2">
 					<div className="flex justify-between text-sm ">
