@@ -3,18 +3,18 @@
 import { useState, useEffect } from "react";
 
 const Total = () => {
-	const [dias, setDias] = useState([]);
-	const [horas, setHoras] = useState([]);
-	const [minutos, setMinutos] = useState([]);
-	const [notas, setNotas] = useState([]);
+	const [dias, setDias] = useState();
+	const [horas, setHoras] = useState();
+	const [minutos, setMinutos] = useState("00");
+	const [notas, setNotas] = useState();
 
 	useEffect(() => {
 		const fetchData = async () => {
 			const res = await fetch("/api/total");
 			const total = await res.json();
 			setDias(total[0]["dias"]);
-			setHoras(total[0]["tiempo"]["hours"]);
-			setMinutos(String(total[0]["tiempo"]["minutes"]).padStart(2, "0"));
+			if (total[0]["tiempo"]["hours"]) setHoras(total[0]["tiempo"]["hours"]);
+			if (total[0]["tiempo"]["minutes"]) setMinutos(String(total[0]["tiempo"]["minutes"]).padStart(2, "0"));
 			setNotas(total[0]["notas"]);
 		};
 		fetchData();
