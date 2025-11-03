@@ -15,6 +15,7 @@ export async function GET() {
     FROM midi_blocks mb
     LEFT JOIN bloques_obras bo ON mb.id = bo.bloque_id
     LEFT JOIN obras o ON bo.obra_id = o.id
+	WHERE start_time AT TIME ZONE 'America/Argentina/Buenos_Aires' >= (CURRENT_DATE - INTERVAL '13 days')
     GROUP BY mb.id
     ORDER BY mb.start_time DESC
   `;
