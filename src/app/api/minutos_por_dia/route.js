@@ -11,6 +11,7 @@ export async function GET() {
 				AT TIME ZONE 'America/Argentina/Buenos_Aires' AS dia,
 			ROUND(SUM(EXTRACT(EPOCH FROM (end_time - start_time)) / 60)) AS minutos
 		FROM midi_blocks
+		WHERE start_time AT TIME ZONE 'America/Argentina/Buenos_Aires' >= (CURRENT_DATE - INTERVAL '97 days')
 		GROUP BY dia
 		ORDER BY dia;
   `;

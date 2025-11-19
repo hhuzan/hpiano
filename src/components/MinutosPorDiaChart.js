@@ -17,7 +17,7 @@ const MinutosPorDiaChart = () => {
 				const avg = windowData.reduce((sum, item) => sum + Number(item.minutos), 0) / windowData.length;
 				return { ...d, movingAvg: avg };
 			});
-			setMinutosPorDia(dataWithMA);
+			setMinutosPorDia(dataWithMA.slice(-90));
 		};
 		fetchData();
 	}, []);
