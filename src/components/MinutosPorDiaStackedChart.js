@@ -6,29 +6,50 @@ import { useEffect, useState } from "react";
 const MinutosPorDiaStackedChart = () => {
 	const [obras, setObras] = useState([]);
 	const [data, setData] = useState([]);
+	const [totales, setTotales] = useState({});
 
 	useEffect(() => {
+		let mounted = true;
+
 		const fetchData = async () => {
 			const res = await fetch("/api/minutos_por_dia_y_obra");
 			const raw = await res.json();
 
-			raw.forEach((obj) => {
-				if ("null" in obj) {
-					obj["❓❓❓"] = obj.null;
-					delete obj.null;
-				}
-			});
+			if (!mounted) return;
 
 			setData(raw);
-			const claves = [...new Set(raw.flatMap((obj) => Object.keys(obj).filter((k) => k !== "dia")))];
-			setObras(claves.sort());
+
+			// 🔥 calcular total acumulado por obra
+			const acumulados = {};
+
+			raw.forEach((obj) => {
+				Object.entries(obj).forEach(([key, value]) => {
+					if (key !== "dia") {
+						acumulados[key] = (acumulados[key] || 0) + Number(value);
+					}
+				});
+			});
+
+			// ordenar de mayor a menor total
+			const clavesOrdenadas = Object.keys(acumulados).sort((a, b) => acumulados[b] - acumulados[a]);
+
+			setTotales(acumulados);
+			setObras(clavesOrdenadas);
 		};
+
 		fetchData();
+
+		return () => {
+			mounted = false;
+		};
 	}, []);
 
 	const formatXAxis = (tickItem) => {
 		const date = new Date(tickItem);
-		return date.toLocaleDateString("es-AR", { weekday: "short", day: "numeric" });
+		return date.toLocaleDateString("es-AR", {
+			weekday: "short",
+			day: "numeric",
+		});
 	};
 
 	return (
@@ -36,13 +57,17 @@ const MinutosPorDiaStackedChart = () => {
 			<ResponsiveContainer width="100%" height="100%">
 				<BarChart data={data}>
 					<XAxis dataKey="dia" tickFormatter={formatXAxis} />
-					<YAxis />
-					<Legend />
+					<YAxis domain={[0, "auto"]} />
+					<Legend formatter={(value) => `${value} (${Math.round(totales[value] || 0)} min)`} />
+
+					{/* 🎨 Patrones para obras (excepto "???") */}
 					<defs>
 						{obras.map((obra, index) => {
+							if (obra === "???") return null;
+
 							const color = `hsl(${(index * 60) % 360}, 70%, 50%)`;
-							const patternId = Math.floor(index / 6) % 2 === 0 ? "solid" : "diagonal-stripes";
-							const fullId = `${patternId}-${index}`;
+							const patternType = Math.floor(index / 6) % 2 === 0 ? "solid" : "diagonal-stripes";
+							const fullId = `${patternType}-${index}`;
 
 							return (
 								<pattern
@@ -54,7 +79,7 @@ const MinutosPorDiaStackedChart = () => {
 									patternTransform="rotate(45)"
 								>
 									<rect width="10" height="10" fill={color} />
-									{patternId === "diagonal-stripes" && (
+									{patternType === "diagonal-stripes" && (
 										<line x1="0" y1="0" x2="0" y2="10" stroke="black" strokeWidth="2" />
 									)}
 								</pattern>
@@ -62,14 +87,35 @@ const MinutosPorDiaStackedChart = () => {
 						})}
 					</defs>
 
+					{/* 📊 Barras */}
 					{obras.map((obra, index) => {
-						const patternId = Math.floor(index / 6) % 2 === 0 ? "solid" : "diagonal-stripes";
+						// 🩶 Caso especial: ??? (gris fijo)
+						if (obra === "???") {
+							return (
+								<Bar
+									key={obra}
+									dataKey={obra}
+									stackId="a"
+									fill="#9CA3AF" // Tailwind gray-400
+								>
+									<LabelList
+										dataKey={obra}
+										position="center"
+										formatter={(value) => (Number(value) > 0 ? Math.round(value) : null)}
+										fill="white"
+									/>
+								</Bar>
+							);
+						}
+
+						const patternType = Math.floor(index / 6) % 2 === 0 ? "solid" : "diagonal-stripes";
+
 						return (
-							<Bar key={obra} dataKey={obra} stackId="a" fill={`url(#${patternId}-${index})`}>
+							<Bar key={obra} dataKey={obra} stackId="a" fill={`url(#${patternType}-${index})`}>
 								<LabelList
 									dataKey={obra}
 									position="center"
-									formatter={(value) => (value > 0 ? value.toFixed() : "")}
+									formatter={(value) => (Number(value) > 0 ? Math.round(value) : null)}
 									fill="white"
 								/>
 							</Bar>

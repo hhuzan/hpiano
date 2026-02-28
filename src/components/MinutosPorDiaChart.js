@@ -39,7 +39,12 @@ const MinutosPorDiaChart = () => {
 					<XAxis dataKey="dia" tickFormatter={formatXAxis} />
 					<YAxis />
 					<Bar dataKey="minutos" fill="#2563eb">
-						<LabelList dataKey="minutos" position="insideTop" fill="yellow" />
+						<LabelList
+							dataKey="minutos"
+							position="insideTop"
+							fill="yellow"
+							formatter={(value) => (Number(value) === 0 ? null : value)}
+						/>
 					</Bar>
 					<ReferenceLine
 						y={promedio}
