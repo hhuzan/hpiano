@@ -46,6 +46,7 @@ const MinutosPorDiaStackedChart = () => {
 
 	// ✅ FIX: crear fecha en horario local (evita corrimiento)
 	const formatXAxis = (tickItem) => {
+		console.log("tickItem:", tickItem, typeof tickItem);
 		if (!tickItem) return "";
 
 		const [year, month, day] = tickItem.split("-");
