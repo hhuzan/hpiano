@@ -9,14 +9,13 @@ export async function GET() {
 
 		const data = await sql`
       SELECT
-        DATE(start_time) AS dia,
+        DATE(start_time AT TIME ZONE 'America/Argentina/Buenos_Aires') AS dia,
         COALESCE(SUM(EXTRACT(EPOCH FROM (end_time - start_time)) / 60), 0) AS minutos
       FROM midi_blocks
       GROUP BY dia
       ORDER BY dia ASC
     `;
 
-		// 👇 Nos aseguramos que dia sea string YYYY-MM-DD
 		const formatted = data.map((row) => ({
 			dia: row.dia.toISOString().slice(0, 10),
 			minutos: Number(row.minutos),
