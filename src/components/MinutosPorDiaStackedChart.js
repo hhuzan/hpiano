@@ -44,8 +44,13 @@ const MinutosPorDiaStackedChart = () => {
 		};
 	}, []);
 
+	// ✅ FIX: crear fecha en horario local (evita corrimiento)
 	const formatXAxis = (tickItem) => {
-		const date = new Date(tickItem);
+		if (!tickItem) return "";
+
+		const [year, month, day] = tickItem.split("-");
+		const date = new Date(Number(year), Number(month) - 1, Number(day));
+
 		return date.toLocaleDateString("es-AR", {
 			weekday: "short",
 			day: "numeric",
@@ -92,12 +97,7 @@ const MinutosPorDiaStackedChart = () => {
 						// 🩶 Caso especial: ??? (gris fijo)
 						if (obra === "???") {
 							return (
-								<Bar
-									key={obra}
-									dataKey={obra}
-									stackId="a"
-									fill="#9CA3AF" // Tailwind gray-400
-								>
+								<Bar key={obra} dataKey={obra} stackId="a" fill="#9CA3AF">
 									<LabelList
 										dataKey={obra}
 										position="center"
