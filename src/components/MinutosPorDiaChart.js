@@ -27,8 +27,15 @@ const MinutosPorDiaChart = () => {
 	const promedio = Math.round(total / minutosPorDia.length);
 
 	const formatXAxis = (tickItem) => {
+		if (!tickItem) return "";
+
 		const date = new Date(tickItem);
-		return date.toLocaleDateString("es-AR", { month: "short", day: "numeric" });
+
+		return date.toLocaleDateString("es-AR", {
+			month: "short",
+			day: "numeric",
+			timeZone: "UTC", // 🔥 igual que en el otro componente
+		});
 	};
 
 	return (
