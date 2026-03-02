@@ -19,7 +19,6 @@ const MinutosPorDiaStackedChart = () => {
 
 			setData(raw);
 
-			// 🔥 calcular total acumulado por obra
 			const acumulados = {};
 
 			raw.forEach((obj) => {
@@ -30,7 +29,6 @@ const MinutosPorDiaStackedChart = () => {
 				});
 			});
 
-			// ordenar de mayor a menor total
 			const clavesOrdenadas = Object.keys(acumulados).sort((a, b) => acumulados[b] - acumulados[a]);
 
 			setTotales(acumulados);
@@ -44,7 +42,6 @@ const MinutosPorDiaStackedChart = () => {
 		};
 	}, []);
 
-	// ✅ FIX: crear fecha en horario local (evita corrimiento)
 	const formatXAxis = (tickItem) => {
 		if (!tickItem) return "";
 
@@ -53,7 +50,7 @@ const MinutosPorDiaStackedChart = () => {
 		return date.toLocaleDateString("es-AR", {
 			weekday: "short",
 			day: "numeric",
-			timeZone: "UTC", // 🔥 CLAVE
+			timeZone: "UTC",
 		});
 	};
 
@@ -65,10 +62,9 @@ const MinutosPorDiaStackedChart = () => {
 					<YAxis domain={[0, "auto"]} />
 					<Legend formatter={(value) => `${value} (${Math.round(totales[value] || 0)} min)`} />
 
-					{/* 🎨 Patrones para obras (excepto "???") */}
 					<defs>
 						{obras.map((obra, index) => {
-							if (obra === "???") return null;
+							if (obra === "🤔🤔🤔") return null;
 
 							const color = `hsl(${(index * 60) % 360}, 70%, 50%)`;
 							const patternType = Math.floor(index / 6) % 2 === 0 ? "solid" : "diagonal-stripes";
@@ -92,10 +88,8 @@ const MinutosPorDiaStackedChart = () => {
 						})}
 					</defs>
 
-					{/* 📊 Barras */}
 					{obras.map((obra, index) => {
-						// 🩶 Caso especial: ??? (gris fijo)
-						if (obra === "???") {
+						if (obra === "🤔🤔🤔") {
 							return (
 								<Bar key={obra} dataKey={obra} stackId="a" fill="#9CA3AF">
 									<LabelList

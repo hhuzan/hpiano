@@ -9,7 +9,7 @@ export async function GET() {
 	try {
 		const result = await sql`
       SELECT 
-        COALESCE(obras.nombre, 'Sin obra') AS nombre,
+        COALESCE(obras.nombre, '🤔🤔🤔') AS nombre,
         NOW() - MAX(midi_blocks.start_time) AS ultima
       FROM midi_blocks
       LEFT JOIN bloques_obras 

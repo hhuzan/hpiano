@@ -36,7 +36,7 @@ bloques_con_obras AS (
   SELECT
     bb.id,
     bb.dia,
-    COALESCE(o.nombre, '???') AS nombre,
+    COALESCE(o.nombre, '🤔🤔🤔') AS nombre,
     bb.duracion_min,
     COUNT(o.id) OVER (PARTITION BY bb.id) AS total_obras
   FROM bloques_base bb
