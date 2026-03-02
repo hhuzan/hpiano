@@ -29,13 +29,8 @@ const MinutosPorDiaChart = () => {
 	const formatXAxis = (tickItem) => {
 		if (!tickItem) return "";
 
-		const date = new Date(tickItem);
-
-		return date.toLocaleDateString("es-AR", {
-			month: "short",
-			day: "numeric",
-			timeZone: "UTC", // 🔥 igual que en el otro componente
-		});
+		const [year, month, day] = tickItem.split("-");
+		return `${day}/${month}`;
 	};
 
 	return (
