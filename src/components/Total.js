@@ -38,9 +38,13 @@ const Total = () => {
 
 				setPromedio(`${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`);
 
-				// 🔹 ejemplo: cuánto falta para promediar 60 min por día
-				const faltaMinutos = Math.ceil(60 * dias_ - minutosTotales);
-				setFalta(faltaMinutos > 0 ? faltaMinutos : 0);
+				// 🔥 cálculo correcto de "falta"
+				const promedioEntero = Math.floor(promedioMinutos);
+				const objetivo = promedioEntero + 1;
+
+				const faltaMinutos = objetivo * dias_ - minutosTotales;
+
+				setFalta(faltaMinutos);
 			}
 		};
 
