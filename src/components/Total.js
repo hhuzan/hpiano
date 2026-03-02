@@ -22,7 +22,6 @@ const Total = () => {
 			setDias(dias_);
 			setNotas(notasTotales);
 
-			// 🔹 Convertimos minutos totales a horas + minutos
 			const totalHoras = Math.floor(minutosTotales / 60);
 			const restoMinutos = minutosTotales % 60;
 
@@ -38,7 +37,6 @@ const Total = () => {
 
 				setPromedio(`${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`);
 
-				// 🔥 cálculo correcto de "falta"
 				const promedioEntero = Math.floor(promedioMinutos);
 				const objetivo = promedioEntero + 1;
 
