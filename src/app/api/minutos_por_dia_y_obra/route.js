@@ -1,3 +1,4 @@
+// app/api/minutos_por_dia_y_obra/route.js
 import { NextResponse } from "next/server";
 import { neon } from "@neondatabase/serverless";
 
@@ -5,24 +6,30 @@ const sql = neon(process.env.DATABASE_URL);
 
 export async function GET() {
 	const rows = await sql`
-WITH dias AS (
+WITH params AS (
+  SELECT
+    (CURRENT_TIMESTAMP AT TIME ZONE 'America/Argentina/Buenos_Aires')::date AS hoy_ar
+),
+
+dias AS (
   SELECT generate_series(
-    CURRENT_DATE - INTERVAL '13 days',
-    CURRENT_DATE,
+    p.hoy_ar - INTERVAL '13 days',
+    p.hoy_ar,
     INTERVAL '1 day'
   )::date AS dia
+  FROM params p
 ),
 
 bloques_base AS (
   SELECT
     mb.id,
-    date_trunc(
-      'day',
-      mb.start_time AT TIME ZONE 'America/Argentina/Buenos_Aires'
-    )::date AS dia,
+    (mb.start_time AT TIME ZONE 'America/Argentina/Buenos_Aires')::date AS dia,
     EXTRACT(EPOCH FROM (mb.end_time - mb.start_time)) / 60 AS duracion_min
   FROM midi_blocks mb
-  WHERE mb.start_time >= (CURRENT_DATE - INTERVAL '13 days')
+  JOIN params p ON true
+  WHERE
+    (mb.start_time AT TIME ZONE 'America/Argentina/Buenos_Aires')::date
+      >= p.hoy_ar - INTERVAL '13 days'
 ),
 
 bloques_con_obras AS (
