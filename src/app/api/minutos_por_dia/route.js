@@ -11,7 +11,7 @@ export async function GET() {
       SELECT
         DATE(start_time) AS dia,
         COALESCE(SUM(EXTRACT(EPOCH FROM (end_time - start_time)) / 60), 0) AS minutos
-      FROM bloques
+      FROM midi_blocks
       GROUP BY dia
       ORDER BY dia ASC
     `;
