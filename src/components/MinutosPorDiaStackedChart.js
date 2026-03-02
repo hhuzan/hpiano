@@ -46,15 +46,14 @@ const MinutosPorDiaStackedChart = () => {
 
 	// ✅ FIX: crear fecha en horario local (evita corrimiento)
 	const formatXAxis = (tickItem) => {
-		console.log("tickItem:", tickItem, typeof tickItem);
 		if (!tickItem) return "";
 
-		const [year, month, day] = tickItem.split("-");
-		const date = new Date(Number(year), Number(month) - 1, Number(day));
+		const date = new Date(tickItem);
 
 		return date.toLocaleDateString("es-AR", {
 			weekday: "short",
 			day: "numeric",
+			timeZone: "UTC", // 🔥 CLAVE
 		});
 	};
 
