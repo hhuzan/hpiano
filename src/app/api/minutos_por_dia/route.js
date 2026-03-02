@@ -10,7 +10,7 @@ export async function GET() {
 		const data = await sql`
       WITH dias AS (
         SELECT generate_series(
-          CURRENT_DATE - INTERVAL '89 days',
+          CURRENT_DATE - INTERVAL '99 days',
           CURRENT_DATE,
           INTERVAL '1 day'
         )::date AS dia
