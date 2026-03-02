@@ -1,4 +1,4 @@
-// app/api/bloques/route.js
+// app/api/total/route.js
 
 import { NextResponse } from "next/server";
 import { neon } from "@neondatabase/serverless";

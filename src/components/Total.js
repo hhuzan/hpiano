@@ -6,7 +6,7 @@ const Total = () => {
 	const [dias, setDias] = useState(0);
 	const [horas, setHoras] = useState(0);
 	const [minutos, setMinutos] = useState("00");
-	const [notas, setNotas] = useState();
+	const [notas, setNotas] = useState(0);
 	const [promedio, setPromedio] = useState("00:00:00");
 	const [falta, setFalta] = useState(0);
 
@@ -15,25 +15,35 @@ const Total = () => {
 			const res = await fetch("/api/total");
 			const total = await res.json();
 
-			const dias_ = total[0]?.dias ?? 0;
-			const { hours = 0, minutes = 0, seconds = 0 } = total[0]?.tiempo ?? {};
+			const dias_ = total?.dias ?? 0;
+			const minutosTotales = total?.minutos_totales ?? 0;
+			const notasTotales = total?.notas_totales ?? 0;
 
-			setNotas(total[0]["notas"]);
 			setDias(dias_);
-			setHoras(hours);
-			setMinutos(String(minutes).padStart(2, "0"));
+			setNotas(notasTotales);
+
+			// 🔹 Convertimos minutos totales a horas + minutos
+			const totalHoras = Math.floor(minutosTotales / 60);
+			const restoMinutos = minutosTotales % 60;
+
+			setHoras(totalHoras);
+			setMinutos(String(restoMinutos).padStart(2, "0"));
 
 			if (dias_ > 0) {
-				const totalSegundos = hours * 3600 + minutes * 60 + seconds;
-				const promedioSegundos = totalSegundos / dias_;
-				const h = Math.floor(promedioSegundos / 3600);
-				const m = Math.floor((promedioSegundos % 3600) / 60);
-				const s = Math.floor(promedioSegundos % 60);
-				const f = Math.ceil(((-60 + (promedioSegundos % 60)) * dias_) / 60);
-				setFalta(f);
+				const promedioMinutos = minutosTotales / dias_;
+
+				const h = Math.floor(promedioMinutos / 60);
+				const m = Math.floor(promedioMinutos % 60);
+				const s = Math.floor((promedioMinutos * 60) % 60);
+
 				setPromedio(`${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`);
+
+				// 🔹 ejemplo: cuánto falta para promediar 60 min por día
+				const faltaMinutos = Math.ceil(60 * dias_ - minutosTotales);
+				setFalta(faltaMinutos > 0 ? faltaMinutos : 0);
 			}
 		};
+
 		fetchData();
 	}, []);
 
