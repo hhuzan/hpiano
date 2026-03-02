@@ -8,13 +8,15 @@ export async function GET() {
 		const sql = neon(process.env.DATABASE_URL);
 
 		const data = await sql`
-      SELECT
-        DATE(start_time AT TIME ZONE 'America/Argentina/Buenos_Aires') AS dia,
-        COALESCE(SUM(EXTRACT(EPOCH FROM (end_time - start_time)) / 60), 0) AS minutos
-      FROM midi_blocks
-      GROUP BY dia
-      ORDER BY dia ASC
-    `;
+  			SELECT
+    		DATE(start_time AT TIME ZONE 'America/Argentina/Buenos_Aires') AS dia,
+    		ROUND(
+  				SUM(EXTRACT(EPOCH FROM (end_time - start_time)) / 60)
+			) AS minutos
+  			FROM midi_blocks
+  			GROUP BY dia
+  			ORDER BY dia ASC
+		`;
 
 		const formatted = data.map((row) => ({
 			dia: row.dia.toISOString().slice(0, 10),
