@@ -13,10 +13,13 @@ export async function GET() {
           DATE(start_time AT TIME ZONE 'America/Argentina/Buenos_Aires')
         ) AS dia_inicio
         FROM midi_blocks
+      ),
+      hoy AS (
+        SELECT DATE(NOW() AT TIME ZONE 'America/Argentina/Buenos_Aires') AS hoy
       )
       SELECT
         (
-          CURRENT_DATE -
+          (SELECT hoy FROM hoy) -
           (SELECT dia_inicio FROM primer_dia)
         ) + 1 AS dias,
         ROUND(
