@@ -8,30 +8,31 @@ export async function GET() {
 		const sql = neon(process.env.DATABASE_URL);
 
 		const data = await sql`
-      WITH dias AS (
-        SELECT generate_series(
-          CURRENT_DATE - INTERVAL '99 days',
-          CURRENT_DATE,
-          INTERVAL '1 day'
-        )::date AS dia
-      ),
-      minutos_por_dia AS (
-        SELECT
-          DATE(start_time AT TIME ZONE 'America/Argentina/Buenos_Aires') AS dia,
-          ROUND(
-            SUM(EXTRACT(EPOCH FROM (end_time - start_time)) / 60)
-          ) AS minutos
-        FROM midi_blocks
-        GROUP BY dia
-      )
-      SELECT
-        dias.dia,
-        COALESCE(minutos_por_dia.minutos, 0) AS minutos
-      FROM dias
-      LEFT JOIN minutos_por_dia
-        ON dias.dia = minutos_por_dia.dia
-      ORDER BY dias.dia ASC
-    `;
+  WITH dias AS (
+    SELECT generate_series(
+      DATE(NOW() AT TIME ZONE 'America/Argentina/Buenos_Aires') - INTERVAL '99 days',
+      DATE(NOW() AT TIME ZONE 'America/Argentina/Buenos_Aires'),
+      INTERVAL '1 day'
+    )::date AS dia
+  ),
+  minutos_por_dia AS (
+    SELECT
+      DATE(start_time AT TIME ZONE 'America/Argentina/Buenos_Aires') AS dia,
+      ROUND(
+        SUM(EXTRACT(EPOCH FROM (end_time - start_time)) / 60)
+      ) AS minutos
+    FROM midi_blocks
+    WHERE start_time >= NOW() - INTERVAL '100 days'
+    GROUP BY dia
+  )
+  SELECT
+    dias.dia,
+    COALESCE(minutos_por_dia.minutos, 0) AS minutos
+  FROM dias
+  LEFT JOIN minutos_por_dia
+    ON dias.dia = minutos_por_dia.dia
+  ORDER BY dias.dia ASC
+`;
 
 		const formatted = data.map((row) => ({
 			dia: row.dia.toISOString().slice(0, 10),
